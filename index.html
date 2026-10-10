@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f3ec">
+    <title>Español — моя іспанська</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="topbar">
+        <a class="logo" href="#">
+            <span class="logo-icon">ñ</span>
+            <span>mi español</span>
+        </a>
+        <button class="manage-questions-open" id="openQuestionManager">Додати питання до тесту</button>
+        <button class="test-open" id="openTest">Пройти тест ↗</button>
+    </header>
+
+    <main class="page">
+        <section class="intro">
+            <p class="eyebrow">MI ESPACIO · МОЯ ІСПАНСЬКА</p>
+            <h1>Вчу іспанську.<br><span>У своєму темпі.</span></h1>
+            <p class="intro-text">Твої слова, правила й речення — в одному місці.</p>
+        </section>
+
+        <section class="library">
+            <div class="library-heading">
+                <div>
+                    <p class="eyebrow">МОЯ БАЗА</p>
+                    <h2>Мої матеріали <span id="counter">0</span></h2>
+                </div>
+                <button class="add-button" id="addToggle" aria-label="Додати картку">+</button>
+            </div>
+
+            <form class="add-form hidden" id="addForm">
+                <h3>Нова картка</h3>
+
+                <label class="field">
+                    <span>Іспанською</span>
+                    <textarea id="newSpanish" placeholder="Напиши слово або речення..." required maxlength="2000"></textarea>
+                </label>
+
+                <label class="field">
+                    <span>Переклад</span>
+                    <textarea id="newTranslation" placeholder="Напиши переклад..." required maxlength="2000"></textarea>
+                </label>
+
+                <label class="field">
+                    <span>Розділ</span>
+                    <select id="newSection">
+                        <option value="words">Слова</option>
+                        <option value="sentences">Речення</option>
+                        <option value="verbs">Дієслова</option>
+                        <option value="grammar">Граматика</option>
+                    </select>
+                </label>
+
+                <div class="form-actions">
+                    <button type="button" class="secondary-button" id="cancelAdd">Скасувати</button>
+                    <button type="submit" class="primary-button">Додати картку +</button>
+                </div>
+            </form>
+
+            <nav class="filters" id="filters" aria-label="Фільтр карток">
+                <button class="filter active" data-section="all">Усе</button>
+                <button class="filter" data-section="words">Слова</button>
+                <button class="filter" data-section="sentences">Речення</button>
+                <button class="filter" data-section="verbs">Дієслова</button>
+                <button class="filter" data-section="grammar">Граматика</button>
+            </nav>
+
+            <div class="cards" id="cards"></div>
+        </section>
+    </main>
+
+    <footer>poco a poco — крок за кроком ♡</footer>
+
+    <div class="modal" id="testModal" aria-hidden="true">
+        <div class="modal-backdrop" id="closeTest"></div>
+
+        <section class="test-window" role="dialog" aria-modal="true" aria-labelledby="testTitle">
+            <div class="test-top">
+                <span class="test-logo">ñ · PRACTICE</span>
+                <button class="close-button" id="closeTestButton" aria-label="Закрити тест">✕</button>
+            </div>
+
+            <div id="quizArea">
+                <div class="test-progress-info">
+                    <span id="progressLabel">ЗАПИТАННЯ 1 / 20</span>
+                    <span id="scoreLabel">0 правильних</span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <p class="question-tag" id="questionTag">ПЕРЕКЛАД</p>
+                <h2 class="question" id="question">Завантаження запитання...</h2>
+                <p class="question-hint" id="questionHint">Обери одну правильну відповідь.</p>
+
+                <div class="answer-options" id="answerOptions"></div>
+
+                <p class="feedback" id="feedback" aria-live="polite"></p>
+
+                <button class="primary-button next-button" id="nextQuestion" disabled>
+                    Наступне запитання →
+                </button>
+            </div>
+
+            <div class="result-area hidden" id="resultArea">
+                <p class="eyebrow">ТЕСТ ЗАВЕРШЕНО</p>
+                <h2>¡Muy bien!</h2>
+                <p class="result-score" id="resultScore">0/20</p>
+                <p id="resultText"></p>
+                <div class="result-details" id="resultDetails"></div>
+                <button class="primary-button" id="restartTest">Пройти ще раз ↻</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Вікно зі списком питань -->
+<div class="modal" id="questionManagerModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-manager></div>
+
+    <section class="test-window manager-window"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="managerTitle">
+
+        <div class="test-top">
+            <span class="test-logo">ñ · МОЇ ПИТАННЯ</span>
+            <button class="close-button" data-close-manager>✕</button>
+        </div>
+
+        <h2 class="manager-title" id="managerTitle">Мої питання</h2>
+        <p class="manager-description">
+            Створюй власні питання для тренування.
+        </p>
+
+        <button class="primary-button full-button" id="addQuestionButton">
+            ＋ Додати питання
+        </button>
+
+        <div class="question-list" id="questionList"></div>
+    </section>
+</div>
+
+<!-- Вікно створення та редагування питання -->
+<div class="modal" id="questionEditorModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-editor></div>
+
+    <section class="test-window manager-window"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="editorTitle">
+
+        <div class="test-top">
+            <span class="test-logo">ñ · РЕДАГУВАННЯ</span>
+            <button class="close-button" data-close-editor>✕</button>
+        </div>
+
+        <h2 class="manager-title" id="editorTitle">Нове питання</h2>
+
+        <form id="questionForm" class="question-form">
+            <label class="field">
+                <span>Текст питання</span>
+                <textarea id="questionTextInput"
+                          placeholder="Напиши своє питання..."
+                          maxlength="2000"
+                          required></textarea>
+            </label>
+
+            <label class="field">
+                <span>Тема питання</span>
+                <input id="questionTypeInput"
+                       placeholder="Наприклад: СЛОВА"
+                       maxlength="60"
+                       required>
+            </label>
+
+            <div class="options-heading">
+                <span>Варіанти відповіді</span>
+                <span class="small-note">Познач правильний кружечок</span>
+            </div>
+
+            <div id="questionOptionsEditor"
+                 class="question-options-editor"></div>
+
+            <button type="button"
+                    class="secondary-button full-button"
+                    id="addOptionButton">
+                ＋ Додати варіант
+            </button>
+
+            <p class="editor-note">
+                Додай щонайменше 2 варіанти та познач правильну відповідь.
+            </p>
+
+            <div class="form-actions">
+                <button type="button"
+                        class="secondary-button"
+                        id="cancelQuestionEdit">
+                    Скасувати
+                </button>
+
+                <button type="submit" class="primary-button">
+                    Зберегти
+                </button>
+            </div>
+        </form>
+    </section>
+</div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
